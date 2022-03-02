@@ -11,18 +11,20 @@ def complementary(sequence):
     return complementary_strand
 
 def findORF(seq):
+    Long_ORF = ''
     reverse_seq = seq[::-1]
     comp_seq = complementary(seq)
     reverse_comp_seq = comp_seq[::-1]
-    
-    ORF = ''
-    '''if 'ATG' in strand:
-        ORF = seq[seq.find('ATG'):]
-        Stop_1 = ORF_seq.find('TAA')
-        Stop_2 = ORF_seq.find('TAG')
-        Stop_3 = ORF_seq.find('TGA')'''
-
-    return ORF
+    allStrands = [seq, reverse_seq, comp_seq, reverse_comp_seq]
+    for strand in allStrands:
+        ORF = strand[strand.find('ATG'):]
+        for i in range(len(ORF)):
+            if i%3 == 0: codon = ORF[i:i+3]
+            if codon == 'TGA' or codon == 'TAA' or codon == 'TAG':
+                ORF = ORF[:i+3]
+        if len(ORF) > len(Long_ORF):
+            Long_ORF = ORF
+    return Long_ORF
 
 def transcribe(ORF):
     mRNA = ORF.replace('T','U')
@@ -61,9 +63,8 @@ def translate(RNA_seq):
 f = open(args.sequence, 'r')
 seq = f.read()
 #comp = complementary(seq)
-#print(seq)
-#print(comp)
 
 ORF = findORF(seq)
 mRNA = transcribe(ORF)
 print(translate(mRNA))
+#print(len('ATGAAATTTGGGCCCAGAGCTCCGGGTAGCGCGTTACATTGA'))
